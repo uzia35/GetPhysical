@@ -1,0 +1,55 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Parameters": {
+        "authgetphysical6cd599cdUserPoolId": {
+            "Type": "String",
+            "Default": "authgetphysical6cd599cdUserPoolId"
+        },
+        
+        "authgetphysical6cd599cdAppClientID": {
+            "Type": "String",
+            "Default": "authgetphysical6cd599cdAppClientID"
+        },
+        "authgetphysical6cd599cdAppClientIDWeb": {
+            "Type": "String",
+            "Default": "authgetphysical6cd599cdAppClientIDWeb"
+        },
+        "AuthRoleArn": {
+            "Type": "String"
+        },
+        "UnauthRoleArn": {
+            "Type": "String"
+        },
+        "env": {
+            "Type": "String"
+        }
+    },
+    "Conditions": {
+        "ShouldNotCreateEnvResources": {
+            "Fn::Equals": [
+                {
+                    "Ref": "env"
+                },
+                "NONE"
+            ]
+        }
+    },
+    "Resources": {
+    
+        "PhysicalTherapyGroupGroup": {
+          "Type" : "AWS::Cognito::UserPoolGroup",
+          "Properties" : {
+              "GroupName" : "PhysicalTherapyGroup",
+              "Precedence" : 1,
+              
+              "UserPoolId" : {
+                "Ref": "authgetphysical6cd599cdUserPoolId"
+              } 
+            }
+        },
+        
+    
+    
+    },
+    
+}

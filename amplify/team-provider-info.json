@@ -1,0 +1,20 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-getphysical-dev-234023-authRole",
+      "UnauthRoleArn": "arn:aws:iam::868550405797:role/amplify-getphysical-dev-234023-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::868550405797:role/amplify-getphysical-dev-234023-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-getphysical-dev-234023-deployment",
+      "UnauthRoleName": "amplify-getphysical-dev-234023-unauthRole",
+      "StackName": "amplify-getphysical-dev-234023",
+      "StackId": "arn:aws:cloudformation:us-east-1:868550405797:stack/amplify-getphysical-dev-234023/84df5380-f897-11ea-9e7a-12cf4a8c2bc2",
+      "AmplifyAppId": "d3essf77a59rt4"
+    },
+    "categories": {
+      "auth": {
+        "getphysical6cd599cd": {}
+      }
+    }
+  }
+}
