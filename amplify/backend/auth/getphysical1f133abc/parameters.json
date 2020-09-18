@@ -1,6 +1,8 @@
 {
-    "resourceNameTruncated": "getphy6cd599cd",
-    "userPoolName": "getphysical6cd599cd_userpool_6cd599cd",
+    "identityPoolName": "getphysical1f133abc_identitypool_1f133abc",
+    "allowUnauthenticatedIdentities": false,
+    "resourceNameTruncated": "getphy1f133abc",
+    "userPoolName": "getphysical1f133abc_userpool_1f133abc",
     "autoVerifiedAttributes": [
         "email"
     ],
@@ -26,11 +28,11 @@
     "userpoolClientReadAttributes": [
         "email"
     ],
-    "userpoolClientLambdaRole": "getphy6cd599cd_userpoolclient_lambda_role",
+    "userpoolClientLambdaRole": "getphy1f133abc_userpoolclient_lambda_role",
     "userpoolClientSetAttributes": false,
-    "sharedId": "6cd599cd",
-    "resourceName": "getphysical6cd599cd",
-    "authSelections": "userPoolOnly",
+    "sharedId": "1f133abc",
+    "resourceName": "getphysical1f133abc",
+    "authSelections": "identityPoolAndUserPool",
     "authRoleArn": {
         "Fn::GetAtt": [
             "AuthRole",
@@ -43,18 +45,8 @@
             "Arn"
         ]
     },
-    "useDefault": "manual",
-    "userPoolGroupList": [
-        "PhysicalTherapyGroup"
-    ],
+    "useDefault": "default",
+    "userPoolGroupList": [],
     "serviceName": "Cognito",
-    "dependsOn": [],
-    "userPoolGroups": true,
-    "adminQueries": false,
-    "triggers": "{}",
-    "hostedUI": false,
-    "parentStack": {
-        "Ref": "AWS::StackId"
-    },
-    "permissions": []
+    "dependsOn": []
 }

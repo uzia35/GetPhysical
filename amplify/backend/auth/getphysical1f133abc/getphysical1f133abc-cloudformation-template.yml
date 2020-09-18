@@ -11,6 +11,12 @@ Parameters:
   
 
     
+  identityPoolName:
+    Type: String
+                
+  allowUnauthenticatedIdentities:
+    Type: String
+            
   resourceNameTruncated:
     Type: String
               
@@ -82,29 +88,11 @@ Parameters:
                       
   userPoolGroupList:
     Type: CommaDelimitedList
-      
+                  
   serviceName:
     Type: String
                       
   dependsOn:
-    Type: CommaDelimitedList
-        
-  userPoolGroups:
-    Type: String
-              
-  adminQueries:
-    Type: String
-            
-  triggers:
-    Type: String
-                
-  hostedUI:
-    Type: String
-                              
-  parentStack:
-    Type: String
-                
-  permissions:
     Type: CommaDelimitedList
     
 Conditions:
@@ -118,7 +106,7 @@ Resources:
   # Created to allow the UserPool SMS Config to publish via the Simple Notification Service during MFA Process
     Type: AWS::IAM::Role
     Properties:
-      RoleName: !If [ShouldNotCreateEnvResources, 'getphy6cd599cd_sns-role', !Join ['',[ 'sns', '6cd599cd', !Select [3, !Split ['-', !Ref 'AWS::StackName']], '-', !Ref env]]]
+      RoleName: !If [ShouldNotCreateEnvResources, 'getphy1f133abc_sns-role', !Join ['',[ 'sns', '1f133abc', !Select [3, !Split ['-', !Ref 'AWS::StackName']], '-', !Ref env]]]
       AssumeRolePolicyDocument: 
         Version: "2012-10-17"
         Statement: 
@@ -130,10 +118,10 @@ Resources:
               - "sts:AssumeRole"
             Condition: 
               StringEquals:
-                sts:ExternalId: getphy6cd599cd_role_external_id
+                sts:ExternalId: getphy1f133abc_role_external_id
       Policies: 
         - 
-          PolicyName: getphy6cd599cd-sns-policy
+          PolicyName: getphy1f133abc-sns-policy
           PolicyDocument: 
             Version: "2012-10-17"
             Statement: 
@@ -179,27 +167,15 @@ Resources:
       SmsVerificationMessage: !Ref smsVerificationMessage
       SmsConfiguration: 
         SnsCallerArn: !GetAtt SNSRole.Arn
-        ExternalId: getphy6cd599cd_role_external_id
+        ExternalId: getphy1f133abc_role_external_id
     
-  
-    
-    
-  
-    
-    
-  
-  
-   
-    
-  # Updating lambda role with permissions to Cognito
-  
   
   UserPoolClientWeb:
   # Created provide application access to user pool
   # Depends on UserPool for ID reference
     Type: "AWS::Cognito::UserPoolClient"
     Properties:
-      ClientName: getphy6cd599cd_app_clientWeb
+      ClientName: getphy1f133abc_app_clientWeb
       
       RefreshTokenValidity: !Ref userpoolClientRefreshTokenValidity
       UserPoolId: !Ref UserPool
@@ -209,7 +185,7 @@ Resources:
   # Depends on UserPool for ID reference
     Type: "AWS::Cognito::UserPoolClient"
     Properties:
-      ClientName: getphy6cd599cd_app_client
+      ClientName: getphy1f133abc_app_client
       
       GenerateSecret: !Ref userpoolClientGenerateSecret
       RefreshTokenValidity: !Ref userpoolClientRefreshTokenValidity
@@ -220,7 +196,7 @@ Resources:
   # Created to execute Lambda which gets userpool app client config values
     Type: 'AWS::IAM::Role'
     Properties:
-      RoleName: !If [ShouldNotCreateEnvResources, !Ref userpoolClientLambdaRole, !Join ['',['upClientLambdaRole', '6cd599cd', !Select [3, !Split ['-', !Ref 'AWS::StackName']], '-', !Ref env]]]
+      RoleName: !If [ShouldNotCreateEnvResources, !Ref userpoolClientLambdaRole, !Join ['',['upClientLambdaRole', '1f133abc', !Select [3, !Split ['-', !Ref 'AWS::StackName']], '-', !Ref env]]]
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -274,7 +250,7 @@ Resources:
   # Marked as depending on UserPoolClientRole for easier to understand CFN sequencing
     Type: 'AWS::IAM::Policy'
     Properties:
-      PolicyName: getphy6cd599cd_userpoolclient_lambda_iam_policy
+      PolicyName: getphy1f133abc_userpoolclient_lambda_iam_policy
       Roles: 
         - !Ref UserPoolClientRole
       PolicyDocument:
@@ -291,7 +267,7 @@ Resources:
   # Marked as depending on UserPoolClientLambdaPolicy for easier to understand CFN sequencing
     Type: 'AWS::IAM::Policy'
     Properties:
-      PolicyName: getphy6cd599cd_userpoolclient_lambda_log_policy
+      PolicyName: getphy1f133abc_userpoolclient_lambda_log_policy
       Roles: 
         - !Ref UserPoolClientRole
       PolicyDocument:
@@ -324,8 +300,50 @@ Resources:
 
   
     
+  # BEGIN IDENTITY POOL RESOURCES
+  
+ 
+  IdentityPool:
+  # Always created
+    Type: AWS::Cognito::IdentityPool
+    Properties: 
+      IdentityPoolName: !If [ShouldNotCreateEnvResources, 'getphysical1f133abc_identitypool_1f133abc', !Join ['',['getphysical1f133abc_identitypool_1f133abc', '__', !Ref env]]]
+      
+      CognitoIdentityProviders:
+        - ClientId:  !Ref UserPoolClient
+          ProviderName: !Sub
+            - cognito-idp.${region}.amazonaws.com/${client}
+            - { region: !Ref "AWS::Region",  client: !Ref UserPool}
+        - ClientId:  !Ref UserPoolClientWeb
+          ProviderName: !Sub
+            - cognito-idp.${region}.amazonaws.com/${client}
+            - { region: !Ref "AWS::Region",  client: !Ref UserPool}
+            
+      AllowUnauthenticatedIdentities: !Ref allowUnauthenticatedIdentities
+       
+       
+    DependsOn: UserPoolClientInputs 
+    
+  
+  IdentityPoolRoleMap:
+  # Created to map Auth and Unauth roles to the identity pool
+  # Depends on Identity Pool for ID ref
+    Type: AWS::Cognito::IdentityPoolRoleAttachment
+    Properties: 
+      IdentityPoolId: !Ref IdentityPool
+      Roles:
+          unauthenticated: !Ref unauthRoleArn
+          authenticated: !Ref authRoleArn
+    DependsOn: IdentityPool
+  
 
 Outputs :
+  
+  IdentityPoolId:
+    Value: !Ref 'IdentityPool'
+    Description:  Id for the identity pool
+  IdentityPoolName:
+    Value: !GetAtt IdentityPool.Name 
   
   
   

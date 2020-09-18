@@ -2,6 +2,8 @@ package com.example.getphysical.ui.login;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.view.View.OnClickListener;
 
@@ -31,19 +33,26 @@ public class RegisterActivity extends AppCompatActivity {
     private void signUpWithEmailAndPass() {
         EditText email = (EditText)findViewById(R.id.email);
         EditText password = (EditText)findViewById(R.id.password);
+        EditText username = (EditText)findViewById(R.id.username);
         Amplify.Auth.signUp(
-                email.getText().toString(),
+                username.getText().toString(),
                 password.getText().toString(),
-                AuthSignUpOptions.builder().userAttribute(AuthUserAttributeKey.email(), "my@email.com").build(),
-                result -> Log.i("AuthQuickStart", "Result: " + result.toString()),
+                AuthSignUpOptions.builder().userAttribute(AuthUserAttributeKey.email(), email.getText().toString()).build(),
+                result -> {Log.i("AuthQuickStart", "Result: " + result.toString());
+                           runOnUiThread(() -> confirmSignUp(username.getText().toString()));
+                          },
                 error -> Log.e("AuthQuickStart", "Sign up failed", error)
         );
     }
 
-    private void confirmSignUp() {
+    private void confirmSignUp(String username) {
+        EditText confirmationCode = (EditText)findViewById(R.id.confirmation_code);
+        Button sign_up_button = (Button)findViewById(R.id.universal_sign_in_button);
+        sign_up_button.setVisibility(View.VISIBLE);
+        confirmationCode.setVisibility(View.VISIBLE);
         Amplify.Auth.confirmSignUp(
-                "username",
-                "the code you received via email",
+                username,
+                confirmationCode.getText().toString(),
                 result -> Log.i("AuthQuickstart", result.isSignUpComplete() ? "Confirm signUp succeeded" : "Confirm sign up not complete"),
                 error -> Log.e("AuthQuickstart", error.toString())
         );
