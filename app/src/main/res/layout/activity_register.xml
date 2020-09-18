@@ -7,6 +7,34 @@
     tools:layout_editor_absoluteY="81dp">
 
     <EditText
+        android:id="@+id/confirmation_code"
+        android:layout_width="0dp"
+        android:layout_height="45dp"
+        android:layout_marginTop="150dp"
+        android:layout_marginEnd="8dp"
+        android:autofillHints=""
+        android:hint="@string/confirmation_code"
+        android:inputType="number"
+        android:visibility="gone"
+        android:selectAllOnFocus="true"
+        app:layout_constraintEnd_toStartOf="@+id/universal_sign_in_button"
+        app:layout_constraintStart_toStartOf="@+id/sign_up_button"
+        app:layout_constraintTop_toBottomOf="@+id/sign_up_button" />
+
+    <Button
+        android:id="@+id/universal_sign_in_button"
+        android:layout_width="0dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="8dp"
+        android:text="@string/action_sign_in_short"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/confirmation_code"
+        app:layout_constraintEnd_toEndOf="@+id/sign_up_button"
+        app:layout_constraintStart_toEndOf="@+id/confirmation_code"
+        app:layout_constraintTop_toBottomOf="@+id/sign_up_button"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <EditText
         android:id="@+id/password"
         android:layout_width="0dp"
         android:layout_height="45dp"
