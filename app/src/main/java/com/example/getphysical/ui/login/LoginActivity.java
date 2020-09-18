@@ -3,7 +3,6 @@ package com.example.getphysical.ui.login;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
 
@@ -38,7 +37,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private OnClickListener registerListener = v -> {
         Log.w("INFO", "switching view to register");
-        setContentView(R.layout.activity_register);
+        startActivity(new Intent(this, RegisterActivity.class));
     };
 
     @Override
@@ -99,7 +98,14 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void signInWithEmailAndPass() {
-
+        EditText email = (EditText)findViewById(R.id.email);
+        EditText password = (EditText)findViewById(R.id.password);
+        Amplify.Auth.signIn(
+                email.getText().toString(),
+                password.getText().toString(),
+                result -> Log.i("AuthQuickstart", result.isSignInComplete() ? "Sign in succeeded" : "Sign in not complete"),
+                error -> Log.e("AuthQuickstart", error.toString())
+        );
 
     }
 

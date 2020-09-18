@@ -12,4 +12,6 @@
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
     <string name="button">Button</string>
+    <string name="title_activity_confirm_registration">Confirm Registration</string>
+    <string name="confirmation_code">Confirmation Code</string>
 </resources>

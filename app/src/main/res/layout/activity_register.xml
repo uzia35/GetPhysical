@@ -17,8 +17,8 @@
         android:imeOptions="actionDone"
         android:inputType="textPassword"
         android:selectAllOnFocus="true"
-        app:layout_constraintEnd_toEndOf="@+id/button2"
-        app:layout_constraintStart_toStartOf="@+id/button2"
+        app:layout_constraintEnd_toEndOf="@+id/sign_up_button"
+        app:layout_constraintStart_toStartOf="@+id/sign_up_button"
         app:layout_constraintTop_toBottomOf="@+id/email" />
 
     <EditText
@@ -37,7 +37,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/sign_up_button"
         android:layout_width="0dp"
         android:layout_height="45dp"
         android:layout_marginStart="16dp"
