@@ -1,26 +1,24 @@
-package com.example.getphysical.ui.login;
+package com.example.getphysical.temp;
 
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
-import android.view.View.OnClickListener;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.amplifyframework.AmplifyException;
 import com.amplifyframework.auth.AuthUserAttributeKey;
-import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin;
 import com.amplifyframework.auth.options.AuthSignUpOptions;
 import com.amplifyframework.core.Amplify;
 import com.example.getphysical.R;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    private EditText email = (EditText)findViewById(R.id.email);
-    private EditText password = (EditText)findViewById(R.id.password);
-    private EditText username = (EditText)findViewById(R.id.username);
+    private EditText email;
+    private EditText password;
+    private EditText username;
 
     private OnClickListener signUpListener = v -> {
         Log.w("INFO", "calling signing up with email/pass");
@@ -41,9 +39,12 @@ public class RegisterActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_register);
+        //setContentView(R.layout.fragment_register);
         findViewById(R.id.sign_up_button).setOnClickListener(signUpListener);
         findViewById(R.id.universal_sign_in_button).setOnClickListener(signInListener);
+        email = (EditText)findViewById(R.id.email);
+        password = (EditText)findViewById(R.id.password);
+        username = (EditText)findViewById(R.id.username);
     }
 
     private void signUpWithEmailAndPass() {
@@ -59,7 +60,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void openConfirmationUI() {
-        Button sign_up_button = findViewById(R.id.sign_up_button);
+        Button sign_up_button = findViewById(R.id.universal_sign_in_button);
         EditText confirmationCode = findViewById(R.id.confirmation_code);
         sign_up_button.setVisibility(View.VISIBLE);
         confirmationCode.setVisibility(View.VISIBLE);

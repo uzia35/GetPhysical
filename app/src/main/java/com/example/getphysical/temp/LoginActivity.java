@@ -1,4 +1,4 @@
-package com.example.getphysical.ui.login;
+package com.example.getphysical.temp;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -32,7 +32,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private OnClickListener universalSignInListener = v -> {
         Log.w("INFO", "calling signing in with email/pass");
-        signInWithEmailAndPass();
+        signInWithUserNameAndPass();
     };
 
     private OnClickListener registerListener = v -> {
@@ -43,7 +43,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.fragment_login);
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
                 .build();
@@ -97,16 +97,15 @@ public class LoginActivity extends AppCompatActivity {
         startActivityForResult(signInIntent, GOOGLE_SIGN_IN_REQUEST_ID);
     }
 
-    private void signInWithEmailAndPass() {
-        EditText email = (EditText)findViewById(R.id.email);
+    private void signInWithUserNameAndPass() {
+        EditText username = (EditText)findViewById(R.id.username);
         EditText password = (EditText)findViewById(R.id.password);
         Amplify.Auth.signIn(
-                email.getText().toString(),
+                username.getText().toString(),
                 password.getText().toString(),
                 result -> Log.i("AuthQuickstart", result.isSignInComplete() ? "Sign in succeeded" : "Sign in not complete"),
                 error -> Log.e("AuthQuickstart", error.toString())
         );
-
     }
 
 }
