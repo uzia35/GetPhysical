@@ -3,10 +3,57 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/mainActivity">
-    <activity
-        android:id="@+id/mainActivity"
-        android:name="com.example.getphysical.MainActivity"
-        android:label="activity_main"
-        tools:layout="@layout/fragment_main" />
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.example.getphysical.ProfileFragment"
+        android:label="fragment_profile"
+        tools:layout="@layout/fragment_profile"
+        />
+
+    <navigation
+        android:id="@+id/authenticationNav"
+        android:label="authenticationNav"
+        app:startDestination="@id/loginFragment">
+        <fragment
+            android:id="@+id/confirmationFragment"
+            android:name="com.example.getphysical.ConfirmationFragment"
+            android:label="confirmation_fragment"
+            app:defaultNavHost="true"
+            app:navGraph="@navigation/nav_graph"
+            tools:layout="@layout/fragment_confirmation" />
+        <fragment
+            android:id="@+id/loginFragment"
+            android:name="com.example.getphysical.LoginFragment"
+            android:label="login_fragment"
+            app:defaultNavHost="true"
+            app:navGraph="@navigation/nav_graph"
+            tools:layout="@layout/fragment_login">
+            <action
+                android:id="@+id/action_loginFragment_to_registrationFragment"
+                app:destination="@id/registrationFragment" />
+        </fragment>
+        <fragment
+            android:id="@+id/registrationFragment"
+            android:name="com.example.getphysical.RegistrationFragment"
+            android:label="registration_fragment"
+            app:defaultNavHost="true"
+            app:navGraph="@navigation/nav_graph"
+            tools:layout="@layout/fragment_registration">
+            <action
+                android:id="@+id/action_registrationFragment_to_confirmationFragment"
+                app:destination="@id/confirmationFragment" />
+        </fragment>
+    </navigation>
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.example.getphysical.HomeFragment"
+        android:label="HomeFragment"
+        tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/action_homeFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+    </fragment>
+
 </navigation>
