@@ -1,4 +1,4 @@
-package com.example.getphysical;
+package com.example.getphysical.Models;
 
 public class User {
 
