@@ -1,5 +1,6 @@
 package com.example.getphysical;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -40,16 +41,16 @@ public class HomeFragment extends Fragment {
     NavController navController;
     Button profile_button;
 
+    @SuppressLint("ResourceType")
     private View.OnClickListener viewProfileListener = v -> {
         Log.w("INFO", "calling signing in with email/pass");
-        navController.navigate(R.id.action_homeFragment_to_auth_graph);
-       /* userViewModel.getUser().observe(getViewLifecycleOwner(), (Observer<User>) user -> {
+        userViewModel.getUser().observe(getViewLifecycleOwner(), (Observer<User>) user -> {
             if (user.getUsername() != null) {
                 navController.navigate(R.id.action_homeFragment_to_profileFragment);
             } else {
-                navController.navigate(R.id.action_homeFragment_to_authenticationNav);
+                navController.navigate(R.id.action_homeFragment_to_loginFragment);
             }
-        });*/
+        });
     };
 
     public HomeFragment() {
@@ -95,8 +96,12 @@ public class HomeFragment extends Fragment {
         NavHostFragment navHostFragment = (NavHostFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
         navController = navHostFragment.getNavController();
         userViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
-        profile_button = (Button)view.findViewById(R.id.view_profile_button);
+        profile_button = view.findViewById(R.id.view_profile_button);
         profile_button.setOnClickListener(viewProfileListener);
+    }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
     }
 }
