@@ -35,7 +35,7 @@ public class LoginFragment extends Fragment {
     private int GOOGLE_SIGN_IN_REQUEST_ID = 1;
 
     private OnClickListener regularLoginListener = v -> {
-        regularLogin(username.getText().toString(), password.getText().toString());
+        userViewModel.regularLogin(username.getText().toString(), password.getText().toString());
     };
 
     private OnClickListener googleLoginListener = v -> {
@@ -70,10 +70,8 @@ public class LoginFragment extends Fragment {
         view.findViewById(R.id.register).setOnClickListener(registerListener);;
         username = view.findViewById(R.id.username);
         password = view.findViewById(R.id.password);
-    }
 
-    private void regularLogin(String username, String password) {
-        userViewModel.regularLogin(username, password).observe(getViewLifecycleOwner(), authSignInResult -> {
+        userViewModel.getAuthSignInResult().observe(getViewLifecycleOwner(), authSignInResult -> {
             if (authSignInResult.isSignInComplete()) {
                 NavHostFragment.findNavController(this).popBackStack();
             } else {

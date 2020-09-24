@@ -12,6 +12,7 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
@@ -37,8 +38,8 @@ public class RegistrationFragment extends Fragment {
     private EditText password;
     private EditText email;
 
-    private View.OnClickListener signUpListener = v -> {
-        signUp(username.getText().toString(), email.getText().toString(), password.getText().toString());
+    private OnClickListener signUpListener = v -> {
+        userViewModel.signUp(username.getText().toString(), email.getText().toString(), password.getText().toString());
     };
 
     public RegistrationFragment() {
@@ -60,19 +61,18 @@ public class RegistrationFragment extends Fragment {
         username = (EditText) view.findViewById(R.id.username);
         password = (EditText) view.findViewById(R.id.password);
         email = (EditText) view.findViewById(R.id.email);
-    }
 
-    private void signUp(String username, String email, String password) {
-        userViewModel.signUp(username, email, password).observe(getViewLifecycleOwner(), (Observer<AuthSignUpResult>) authSignUpResult -> {
+        userViewModel.getAuthSignUpResult().observe(getViewLifecycleOwner(), (Observer<AuthSignUpResult>) authSignUpResult -> {
             if (authSignUpResult.isSignUpComplete()) {
                 Bundle args = new Bundle();
-                args.putString("username", username);
+                args.putString("username", username.getText().toString());
                 navController.navigate(R.id.action_registrationFragment_to_confirmationFragment,args);
             } else {
                 showErrorMessage();
             }
         });
     }
+
 
     private void showErrorMessage() {
         // Display a snackbar error message

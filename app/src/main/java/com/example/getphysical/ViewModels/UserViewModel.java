@@ -14,9 +14,18 @@ import com.amplifyframework.core.Amplify;
 import com.example.getphysical.Models.User;
 
 public class UserViewModel extends ViewModel {
+
     private MutableLiveData<User> user = new MutableLiveData<>();
     private MutableLiveData<AuthSignUpResult> authSignUpResult = new MutableLiveData<>();
     private MutableLiveData<AuthSignInResult> authSignInResult = new MutableLiveData<>();
+
+    public MutableLiveData<AuthSignInResult> getAuthSignInResult() {
+        return authSignInResult;
+    }
+
+    public MutableLiveData<AuthSignUpResult> getAuthSignUpResult() {
+        return authSignUpResult;
+    }
 
     public LiveData<User> getUser() {
         return user;

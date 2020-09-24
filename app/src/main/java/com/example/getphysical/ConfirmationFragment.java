@@ -16,7 +16,10 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 
 import com.amplifyframework.auth.result.AuthSignUpResult;
+import com.amplifyframework.core.Amplify;
 import com.example.getphysical.ViewModels.UserViewModel;
+
+import static com.amplifyframework.auth.result.step.AuthSignInStep.CONFIRM_SIGN_UP;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -32,11 +35,7 @@ public class ConfirmationFragment extends Fragment {
     private String username;
 
     private View.OnClickListener confirmationListener = v -> {
-        try {
-            confirm(username,mfaCode.getText().toString());
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        userViewModel.confirmSignUp(username, mfaCode.getText().toString());
     };
 
     @Override
@@ -53,11 +52,8 @@ public class ConfirmationFragment extends Fragment {
         userViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
         mfaCode = (EditText) view.findViewById(R.id.confirmation_code);
         view.findViewById(R.id.confirmation_button).setOnClickListener(confirmationListener);
-    }
-
-    private void confirm(String username, String mfaCode) throws InterruptedException {
-        userViewModel.confirmSignUp(username, mfaCode).observe(getViewLifecycleOwner(), (Observer<AuthSignUpResult>) authSignUpResult -> {
-            if (authSignUpResult.isSignUpComplete()) {
+        userViewModel.getAuthSignUpResult().observe(getViewLifecycleOwner(), (Observer<AuthSignUpResult>) authSignUpResult -> {
+            if (authSignUpResult.isSignUpComplete() && authSignUpResult.getNextStep().equals(CONFIRM_SIGN_UP)) {
                 NavHostFragment.findNavController(this).popBackStack(R.id.homeFragment,false);
             } else {
                 showErrorMessage();
