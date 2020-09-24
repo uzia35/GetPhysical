@@ -2,11 +2,21 @@ package com.example.getphysical;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+
+import com.amplifyframework.auth.result.AuthSignUpResult;
+import com.example.getphysical.ViewModels.UserViewModel;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -15,51 +25,48 @@ import android.view.ViewGroup;
  */
 public class ConfirmationFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private UserViewModel userViewModel;
+    private NavHostFragment navHostFragment;
+    private NavController navController;
+    private EditText mfaCode;
+    private String username;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public ConfirmationFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment Confirmation.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static ConfirmationFragment newInstance(String param1, String param2) {
-        ConfirmationFragment fragment = new ConfirmationFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+    private View.OnClickListener confirmationListener = v -> {
+        try {
+            confirm(username,mfaCode.getText().toString());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
+    };
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view =  inflater.inflate(R.layout.fragment_confirmation, container, false);
+        username = getArguments().getString("username");
+        return view;
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_confirmation, container, false);
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        navHostFragment = (NavHostFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+        navController = navHostFragment.getNavController();
+        userViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
+        mfaCode = (EditText) view.findViewById(R.id.confirmation_code);
+        view.findViewById(R.id.confirmation_button).setOnClickListener(confirmationListener);
+    }
+
+    private void confirm(String username, String mfaCode) throws InterruptedException {
+        userViewModel.confirmSignUp(username, mfaCode).observe(getViewLifecycleOwner(), (Observer<AuthSignUpResult>) authSignUpResult -> {
+            if (authSignUpResult.isSignUpComplete()) {
+                NavHostFragment.findNavController(this).popBackStack(R.id.homeFragment,false);
+            } else {
+                showErrorMessage();
+            }
+        });
+    }
+
+    private void showErrorMessage() {
+        // Display a snackbar error message
     }
 
     @Override

@@ -20,6 +20,8 @@ import com.amplifyframework.auth.result.AuthSignUpResult;
 import com.example.getphysical.Models.User;
 import com.example.getphysical.ViewModels.UserViewModel;
 
+import static com.amplifyframework.auth.result.step.AuthSignUpStep.CONFIRM_SIGN_UP_STEP;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -63,7 +65,9 @@ public class RegistrationFragment extends Fragment {
     private void signUp(String username, String email, String password) {
         userViewModel.signUp(username, email, password).observe(getViewLifecycleOwner(), (Observer<AuthSignUpResult>) authSignUpResult -> {
             if (authSignUpResult.isSignUpComplete()) {
-                navController.navigate(R.id.action_registrationFragment_to_confirmationFragment);
+                Bundle args = new Bundle();
+                args.putString("username", username);
+                navController.navigate(R.id.action_registrationFragment_to_confirmationFragment,args);
             } else {
                 showErrorMessage();
             }

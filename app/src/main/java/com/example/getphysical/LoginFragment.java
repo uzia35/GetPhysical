@@ -94,8 +94,9 @@ public class LoginFragment extends Fragment {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
-                Log.w("INFO", "signInResult:success code= " + account.getDisplayName());
-                //updateUI(account);
+                Log.w("INFO", "signInResult:success code= " + account.getGivenName());
+                userViewModel.updateUser(account.getGivenName(), account.getEmail());
+                NavHostFragment.findNavController(this).popBackStack();
             } catch (ApiException e) {
                 Log.w("INFO", "signInResult:failed code= " + e);
                 //updateUI(null);

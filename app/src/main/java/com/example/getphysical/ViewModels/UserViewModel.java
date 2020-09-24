@@ -1,20 +1,17 @@
 package com.example.getphysical.ViewModels;
 
-import android.content.Intent;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.amazonaws.Response;
 import com.amplifyframework.auth.AuthUserAttributeKey;
 import com.amplifyframework.auth.options.AuthSignUpOptions;
 import com.amplifyframework.auth.result.AuthSignInResult;
 import com.amplifyframework.auth.result.AuthSignUpResult;
 import com.amplifyframework.core.Amplify;
 import com.example.getphysical.Models.User;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
 
 public class UserViewModel extends ViewModel {
     private MutableLiveData<User> user = new MutableLiveData<>();
@@ -25,27 +22,28 @@ public class UserViewModel extends ViewModel {
         return user;
     }
 
-    public LiveData<AuthSignUpResult> signUp(String username, String email, String password) {
+    public void signUp(String username, String email, String password) {
         Amplify.Auth.signUp(
                 username,
                 password,
                 AuthSignUpOptions.builder().userAttribute(AuthUserAttributeKey.email(), email).build(),
-                result -> {
-                    Log.i("AuthQuickStart", "Result: " + result.toString());
-                    authSignUpResult = new MutableLiveData<>(result);
-                },
-                error -> Log.e("AuthQuickStart", "Sign up failed", error)
-        );
-        return authSignUpResult;
+                result -> authSignUpResult.postValue(result),
+                error -> Log.e("Error", error.toString()));
     }
 
-    public LiveData<AuthSignInResult> regularLogin(String username, String password) {
+    public void regularLogin(String username, String password) {
         Amplify.Auth.signIn(username, password,
-                result -> { Log.i("AuthQuickstart", result.isSignInComplete() ? "Sign in succeeded" : "Sign in not complete");
-                            authSignInResult = new MutableLiveData<>(result);
-                          },
-                error -> Log.e("AuthQuickstart", error.toString()));
-        return authSignInResult;
+                result -> authSignInResult.postValue(result),
+                error -> Log.e("Error", error.toString()));
     }
 
+    public void updateUser(String username, String email) {
+        user.setValue(new User(username, email));
+    }
+
+    public void confirmSignUp(String username, String mfaCode) {
+        Amplify.Auth.confirmSignUp(username, mfaCode,
+                result ->authSignUpResult.postValue(result),
+                error -> Log.e("Error", error.toString()));
+    }
 }
