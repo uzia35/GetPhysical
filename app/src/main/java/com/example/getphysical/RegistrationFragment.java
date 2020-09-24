@@ -63,7 +63,7 @@ public class RegistrationFragment extends Fragment {
         email = (EditText) view.findViewById(R.id.email);
 
         userViewModel.getAuthSignUpResult().observe(getViewLifecycleOwner(), (Observer<AuthSignUpResult>) authSignUpResult -> {
-            if (authSignUpResult.isSignUpComplete()) {
+            if (authSignUpResult.getNextStep().getSignUpStep().equals(CONFIRM_SIGN_UP_STEP)) {
                 Bundle args = new Bundle();
                 args.putString("username", username.getText().toString());
                 navController.navigate(R.id.action_registrationFragment_to_confirmationFragment,args);

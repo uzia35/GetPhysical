@@ -20,6 +20,7 @@ import com.amplifyframework.core.Amplify;
 import com.example.getphysical.ViewModels.UserViewModel;
 
 import static com.amplifyframework.auth.result.step.AuthSignInStep.CONFIRM_SIGN_UP;
+import static com.amplifyframework.auth.result.step.AuthSignUpStep.DONE;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -52,9 +53,10 @@ public class ConfirmationFragment extends Fragment {
         userViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
         mfaCode = (EditText) view.findViewById(R.id.confirmation_code);
         view.findViewById(R.id.confirmation_button).setOnClickListener(confirmationListener);
+
         userViewModel.getAuthSignUpResult().observe(getViewLifecycleOwner(), (Observer<AuthSignUpResult>) authSignUpResult -> {
-            if (authSignUpResult.isSignUpComplete() && authSignUpResult.getNextStep().equals(CONFIRM_SIGN_UP)) {
-                NavHostFragment.findNavController(this).popBackStack(R.id.homeFragment,false);
+            if (authSignUpResult.getNextStep().getSignUpStep().equals(DONE)) {
+                NavHostFragment.findNavController(this).popBackStack(R.id.loginFragment,false);
             } else {
                 showErrorMessage();
             }
