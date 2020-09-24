@@ -16,13 +16,14 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 
 import com.amazonaws.Response;
+import com.amplifyframework.auth.result.AuthSignUpResult;
 import com.example.getphysical.Models.User;
 import com.example.getphysical.ViewModels.UserViewModel;
 
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link RegistrationFragment#newInstance} factory method to
+ * Use the  factory method to
  * create an instance of this fragment.
  */
 public class RegistrationFragment extends Fragment {
@@ -60,8 +61,8 @@ public class RegistrationFragment extends Fragment {
     }
 
     private void signUp(String username, String email, String password) {
-        userViewModel.signUp(username, email, password).observe(getViewLifecycleOwner(), (Observer< Response>) response -> {
-            if (response.getHttpResponse() != null) {
+        userViewModel.signUp(username, email, password).observe(getViewLifecycleOwner(), (Observer<AuthSignUpResult>) authSignUpResult -> {
+            if (authSignUpResult.isSignUpComplete()) {
                 navController.navigate(R.id.action_registrationFragment_to_confirmationFragment);
             } else {
                 showErrorMessage();

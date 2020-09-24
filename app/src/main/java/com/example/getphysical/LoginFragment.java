@@ -7,42 +7,53 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.SavedStateHandle;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
-import com.example.getphysical.Models.User;
 import com.example.getphysical.ViewModels.UserViewModel;
-import com.example.getphysical.temp.RegisterActivity;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.Task;
 
 public class LoginFragment extends Fragment {
 
     private UserViewModel userViewModel;
-    private SavedStateHandle savedStateHandle;
+    private GoogleSignInClient mGoogleSignInClient;
     private NavHostFragment navHostFragment;
     private NavController navController;
     private EditText username;
     private EditText password;
+    private int GOOGLE_SIGN_IN_REQUEST_ID = 1;
 
     private OnClickListener regularLoginListener = v -> {
         regularLogin(username.getText().toString(), password.getText().toString());
     };
 
     private OnClickListener googleLoginListener = v -> {
-        googleLogin(username.getText().toString(), password.getText().toString());
+        signInWithGoogle();
     };
 
     private OnClickListener registerListener = v -> {
         navController.navigate(R.id.action_loginFragment_to_registrationFragment);
     };
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                                     .requestEmail()
+                                     .build();
+        mGoogleSignInClient = GoogleSignIn.getClient(getActivity(), gso);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -57,13 +68,13 @@ public class LoginFragment extends Fragment {
         view.findViewById(R.id.universal_sign_in_button).setOnClickListener(regularLoginListener);
         view.findViewById(R.id.google_sign_in_button).setOnClickListener(googleLoginListener);;
         view.findViewById(R.id.register).setOnClickListener(registerListener);;
-        username = (EditText) view.findViewById(R.id.username);
-        password = (EditText) view.findViewById(R.id.password);
+        username = view.findViewById(R.id.username);
+        password = view.findViewById(R.id.password);
     }
 
     private void regularLogin(String username, String password) {
-        userViewModel.regularLogin(username, password).observe(getViewLifecycleOwner(), (Observer<User>) user -> {
-            if (user.getUsername() != null) {
+        userViewModel.regularLogin(username, password).observe(getViewLifecycleOwner(), authSignInResult -> {
+            if (authSignInResult.isSignInComplete()) {
                 NavHostFragment.findNavController(this).popBackStack();
             } else {
                 showErrorMessage();
@@ -71,14 +82,25 @@ public class LoginFragment extends Fragment {
         });
     }
 
-    private void googleLogin(String username, String password) {
-        userViewModel.googleLogin(username, password).observe(getViewLifecycleOwner(), (Observer<User>) user -> {
-            if (user.getUsername() != null) {
-                NavHostFragment.findNavController(this).popBackStack();
-            } else {
-                showErrorMessage();
+    private void signInWithGoogle() {
+        startActivityForResult(mGoogleSignInClient.getSignInIntent(), GOOGLE_SIGN_IN_REQUEST_ID);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        // Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
+        if (requestCode == GOOGLE_SIGN_IN_REQUEST_ID) {
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            try {
+                GoogleSignInAccount account = task.getResult(ApiException.class);
+                Log.w("INFO", "signInResult:success code= " + account.getDisplayName());
+                //updateUI(account);
+            } catch (ApiException e) {
+                Log.w("INFO", "signInResult:failed code= " + e);
+                //updateUI(null);
             }
-        });
+        }
     }
 
     private void showErrorMessage() {
